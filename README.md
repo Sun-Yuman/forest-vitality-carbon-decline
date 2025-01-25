@@ -1,2 +1,2 @@
-# europe-forest-carbon-decline
-Code for the article 'Tree vitality decline and the slowing of European forest carbon storage': data preprocessing, analysis, and modeling scripts
+# forest vitality-Europe
+Code for the article 'Tree vitality decline': data preprocessing, analysis, and modeling scripts
