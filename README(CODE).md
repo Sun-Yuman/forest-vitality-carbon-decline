@@ -153,6 +153,7 @@ Package: numpy 1.26.4, pandas 2.2.2, matplotlib 3.8.4, seaborn 0.13.2, sklearn 1
 This script performs several tasks related to the analysis of defoliation, net change, and Net CO2 emissions data.
 
 The Carbon related data are available at https://unfccc.int/ghg-inventories-annex-i-parties/2023. For further inquiries, please contact the corresponding author.
+
 1.It computes annual averages and plots a dual-axis chart of net change (line) and CO₂ removals (bars).
 2.It performs linear regression on carbon emissions versus net change, displaying confidence and prediction intervals with regression statistics.
 3.It creates scatter plots with regression lines for different periods (1990–2021 and 2010–2021), including annotated regression details. 
