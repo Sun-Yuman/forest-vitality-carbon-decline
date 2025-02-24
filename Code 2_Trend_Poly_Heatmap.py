@@ -1,7 +1,7 @@
 """""""""""""""""""""""""""""""""""
 This script processes defoliation data and generates combined plots with segmented trend analysis  and  heatmaps of biogeographic regions showing Defoliation, % deviation from 1990-2019 LTA.
 
-1. Loads the defoliation data from a CSV file.
+1. Loads the defoliation data(average defoliation values computed for each plot over the survey year) from a CSV file.
 2. Defines functions for p-value to star conversion, polynomial fit addition, and trend plotting (Theil-Sen slope and Mann-Kendall trend).
 3. Generates combined plots with segmented trend lines and  biogeographic regions-specific heatmaps.
 4. Saves the resulting plots and baseline data to files.
@@ -27,27 +27,16 @@ from sklearn.pipeline import make_pipeline
 from sklearn.metrics import r2_score
 import numpy as np
 from matplotlib import ticker
-
-# Set the font to Arial
-import pandas as pd
-import seaborn as sns
-import matplotlib.pyplot as plt
-from scipy.stats import theilslopes
-from pymannkendall import original_test as mk
-from matplotlib import rcParams
-from sklearn.linear_model import LinearRegression
-from sklearn.preprocessing import PolynomialFeatures
-from sklearn.pipeline import make_pipeline
-from sklearn.metrics import r2_score
-import numpy as np
-from matplotlib import ticker
+import os
 
 # Set the font to Arial
 rcParams['font.family'] = 'Arial'
 rcParams['font.size'] = '16'
 
 # Load data
-file_path = "C:/Yuman/trend/alldefoliation.csv"
+BASE_DIR = "C:/trend"
+file_path = os.path.join(BASE_DIR, "alldefoliation.csv")
+
 data = pd.read_csv(file_path, low_memory=False)
 
 def p_value_to_stars(p):
@@ -226,7 +215,7 @@ def combined_plot_with_bioregion_heatmap(df, columns_list, dpi=300):
     colorbar_ax = colorbar_fig.add_axes([0.05, 0.5, 0.9, 0.15])
     plt.colorbar(ax3.collections[0], cax=colorbar_ax, orientation='horizontal', format=CustomFormatter(min_val, max_val),
                  ticks=np.linspace(min_val, max_val, num=11))
-    colorbar_file_path = "C:/Yuman/trend/colorbar_plot_horizontal.jpg"
+    colorbar_file_path = os.path.join(BASE_DIR, "colorbar_plot_horizontal.jpg")
     colorbar_fig.savefig(colorbar_file_path, format='jpg', dpi=600, bbox_inches='tight')
     plt.close(colorbar_fig)
 
@@ -234,11 +223,13 @@ def combined_plot_with_bioregion_heatmap(df, columns_list, dpi=300):
     colorbar_ax = colorbar_fig.add_axes([0.05, 0.05, 0.15, 0.9])
     plt.colorbar(ax3.collections[0], cax=colorbar_ax, orientation='vertical', format=CustomFormatter(min_val, max_val),
                  ticks=np.linspace(min_val, max_val, num=11))
-    colorbar_file_path = "C:/Yuman/trend/colorbar_plot_vertical.jpg"
+
+
+    colorbar_file_path = os.path.join(BASE_DIR, "colorbar_plot_vertical.jpg")
     colorbar_fig.savefig(colorbar_file_path, format='jpg', dpi=600, bbox_inches='tight')
     plt.close(colorbar_fig)
 
-    file_path = "C:/Yuman/trend/Trend_Poly_Heatmap.jpg"
+    file_path = os.path.join(BASE_DIR, "Trend_Poly_Heatmap.jpg")
     plt.savefig(file_path, format='jpg', dpi=600)
     plt.show()
     plt.close(fig)
@@ -247,7 +238,8 @@ def combined_plot_with_bioregion_heatmap(df, columns_list, dpi=300):
     bio_baseline_df = pd.DataFrame(bio_baselines)
 
     combined_baseline_df = baseline_df.merge(bio_baseline_df, on='Column', how='outer')
-    combined_baseline_df.to_csv("C:/Yuman/trend/baseline_combine.csv", index=False)
+    output_csv_path = os.path.join(BASE_DIR, "baseline_combine.csv")
+    combined_baseline_df.to_csv(output_csv_path, index=False)
 
 
 combined_plot_with_bioregion_heatmap(data, ["All", "broadleaves", "conifers"])
@@ -315,14 +307,15 @@ def combined_plot_with_heatmap(df, columns_list, dpi=300):
             except Exception as e:
                 print(f"Error processing {column_name} for region {region}: {e}")
 
+    output_csv_path = os.path.join(BASE_DIR, "allperiod_mktrend_regions.csv")
     trend_df = pd.DataFrame(all_trend_data)
-    trend_df.to_csv(f"C:/Yuman/trend/allperiod_mktrend_regions.csv", index=False)
+    trend_df.to_csv(output_csv_path, index=False)
 
 # Generate the trend data
 combined_plot_with_heatmap(data, ["All", "broadleaves", "conifers", "dombroadleaves","domconifers", "mixed", "Beech", "Oak", "Norway spruce", "Scots pine"])
 
 # Load the trend data for plotting
-file_path = "C:/Yuman/trend/allperiod_mktrend_regions.csv"
+file_path = os.path.join(BASE_DIR, "allperiod_mktrend_regions.csv")
 data = pd.read_csv(file_path, low_memory=False)
 
 # Convert 'Trend' column to numerical values
