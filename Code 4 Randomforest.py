@@ -1,11 +1,15 @@
 """""""""""""""""""""""""""""""""""
 This script implements a Random Forest model for data preprocessing and optimization, incorporating spatial clustering, 
 multicollinearity analysis, feature importance assessment, and generating explainable visual outputs like SHAP values and 
-Partial Dependence Plots (PDPs). The primary focus is on predicting forest defoliation using nested cross-validation with the 
+Partial Dependence Plots (PDPs). The primary focus is on predicting forest defoliation(deviation) using nested cross-validation with the 
 Random Forest model (Dev_all).
 
 1. Data Loading and Preprocessing**:
-   - Load data from a CSV file containing spatial, environmental, and biological variables.
+   - Load data from a CSV file containing spatial, stand/plot, tree damage, climate, and air pollution variables.
+ Climate and air pollution data are available at three primary datasets:
+ Climate data were obtained from two primary sources: SPEIbase v2.9, provided by the Spanish National Research Council (CSIC) and accessible at https://spei.csic.es/; 
+ and the ERA5-Land dataset, produced by the European Centre for Medium-Range Weather Forecasts (ECMWF) and available through the Copernicus Climate Data Store at https://cds.climate.copernicus.eu/dataset. 
+ Additionally, air pollution data were sourced from the European Monitoring and Evaluation Programme (EMEP), which can be accessed at https://emep.int/. 
    - Define target (`Dev_all`) and selected features for modeling.
    - Rename columns for better readability and usability.
 
@@ -63,13 +67,19 @@ import statsmodels.api as sm
 from joblib import Parallel, delayed, Memory
 from statsmodels.stats.outliers_influence import variance_inflation_factor
 import warnings
+import os
 warnings.filterwarnings('ignore')
-from skopt.callbacks import EarlyStopper
-# Load data
 
-data_path = 'D:/Yuman/RF/RF_variables.csv'
+# Load data
+BASE_DIR = 'C:/RF/'
+
+if not os.path.exists(BASE_DIR):
+    os.makedirs(BASE_DIR)
+
+data_path = os.path.join(BASE_DIR, 'RF_variables.csv')
 data1 = pd.read_csv(data_path)
 print("Data loaded from:", data_path)
+
 
 # Define selected features
 selected_features = [
