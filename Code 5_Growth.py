@@ -8,7 +8,7 @@ Summary of the script: data analysis of growth reduction and defoliation using l
 5. Conduct sensitivity analysis by adding random bias to 'Defoliation' values and evaluate impact(Group 5-fold cross-validiation).
 6. Process cumulative growth data by splitting groups into 'biogeographic regions' and ''BC(Broadleaves and conifers)' across different time periods.
 7. Create bar charts to depict relative growth across different regions and time periods.
-8
+
 """""""""""""""""""""""""""""""""""
 import os
 import pandas as pd
@@ -18,14 +18,16 @@ import seaborn as sns
 import statsmodels.api as sm
 from sklearn.model_selection import GroupKFold
 from sklearn.metrics import r2_score
-from scipy.stats import pearsonr
 from mpl_toolkits.axes_grid1.inset_locator import inset_axes
 # Set the font and size
 plt.rcParams['font.family'] = 'Arial'
 plt.rcParams['font.size'] = 14
 
 # Load and clean the data
-file_path = 'C:/Yuman/Growth/Growth_defoliation(Metadata).csv'  # Replace with your file path
+
+BASE_DIR = 'C:/Growth/'
+file_path = os.path.join(BASE_DIR, 'Growth_defoliation(Metadata).csv')
+# Replace with your file path
 data = pd.read_csv(file_path)
 filtered_data = data.dropna(subset=['Growth', 'Defoliation'])
 
@@ -112,7 +114,7 @@ def plot_jointplot_with_regression(data, x, y, title, color, filename=None):
     g.set_axis_labels("Defoliation %", "Growth Reduction %")
     rsquared = model.rsquared
     p_value = model.pvalues.iloc[1]
-    correlation = np.sqrt(rsquared)
+  #  correlation = np.sqrt(rsquared)
     significance = significance_asterisks(p_value)
 
     intercept = model.params.iloc[0]
@@ -239,7 +241,10 @@ for category in categories:
                 results_df = pd.concat([results_df, row], ignore_index=True)
 
 # Save the results to a CSV file
-results_csv_path = 'C:/Yuman/Growth/1_fit_singlespecies.csv'  # Change to the path where you want to save the file
+BASE_DIR = 'C:/Growth/'
+
+results_csv_path = os.path.join(BASE_DIR, '1_fit_singlespecies.csv')
+
 results_df.to_csv(results_csv_path, index=False)
 
 print("Analysis and plotting completed, results saved to CSV.")
@@ -259,9 +264,15 @@ for idx, category in enumerate(['All species'] + list(filtered_data['BC'].unique
 
 print("Sensitivity analysis plots completed.")
 
+BASE_DIR = 'C:/Growth/'
 
-data1=pd.read_csv('C:/Yuman/Growth/allsp(8)age.txt',sep='\t',encoding='gbk')
-data6=pd.read_csv('C:/Yuman/Growth/1_fit_singlespecies.csv',header=0)
+results_csv_path = os.path.join(BASE_DIR, '1_fit_singlespecies.csv')
+
+file_path_allsp = os.path.join(BASE_DIR, 'allsp(8)age.txt')
+file_path_fit = os.path.join(BASE_DIR, '1_fit_singlespecies.csv')
+
+data1 = pd.read_csv(file_path_allsp, sep='\t', encoding='gbk')
+data6 = pd.read_csv(file_path_fit, header=0)
 print(data6.columns)
 print(data1.head())
 if 'grp_tree_species' in data1.columns:
@@ -281,7 +292,9 @@ else:
     print("There are no missing values in the 'Linear Fit of Concatenated Data' column of data1.")
 print(f"Total number of rows in the dataframe after merging: {len(data1)}")
 
-data1.to_csv('C:/Yuman/Growth/allspage(GroBC).txt', sep='\t', encoding='gbk')
+output_file_path = os.path.join(BASE_DIR, 'allspage(GroBC).txt')
+
+data1.to_csv(output_file_path, sep='\t', encoding='gbk')
 
 if 'grp_tree_species' in data1.columns:
     unique_grp_tree_species = data1['grp_tree_species'].unique()
@@ -419,7 +432,7 @@ def process_and_save_file_with_combined_plot(file_path, time_periods, colors, di
     cumulative_values_df.to_csv(os.path.join(directory_path, 'cum_growth_BC.csv'), index=False)
 
 # Set parameters and call the function
-directory_path = 'C:/Yuman/GrowthReduction/'
+directory_path = 'C:/GrowthReduction/'
 file_path = os.path.join(directory_path, 'allspage(GroBC).txt')
 
 time_periods = [(1990, 1999), (2000, 2009), (2010, 2019), (2020, 2022)]
@@ -428,7 +441,8 @@ colors = ['#70AD47', '#5B9BD5', '#FFC000', '#C00000']
 process_and_save_file_with_combined_plot(file_path, time_periods, colors, directory_path)
 
 # Load the CSV file
-file_path = r'C:\Yuman\GrowthReduction\cum_growth_BC.csv'
+BASE_DIR = 'C:/GrowthReduction'
+file_path = os.path.join(BASE_DIR, 'cum_growth_BC.csv')
 df = pd.read_csv(file_path)
 
 # Specific regions list
@@ -446,7 +460,7 @@ def split_group(group):
 df[['Region', 'BC']] = df['Group'].apply(lambda x: pd.Series(split_group(x)))
 
 # Save the modified dataframe to a new CSV file
-output_path = r'C:\Yuman\GrowthReduction\cum_growth_BC_drawm.csv'
+output_path = os.path.join(BASE_DIR, 'cum_growth_BC_drawm.csv')
 df.to_csv(output_path, index=False)
 
 print(f"Modified CSV saved to {output_path}")
@@ -454,13 +468,14 @@ print(f"Modified CSV saved to {output_path}")
 plt.rcParams['font.family'] = 'Arial'
 plt.rcParams['font.size'] = 14
 
-file_path = 'C:/Yuman/GrowthReduction/cum_growth_BC_drawm.csv'
+BASE_DIR = 'C:/GrowthReduction'
+output_path = os.path.join(BASE_DIR, 'cum_growth_BC_drawm.csv')
 df = pd.read_csv(file_path)
 categories = df['BC'].unique()
 years = df['Time Period'].unique()
 colors1 = ['#70AD47', '#5B9BD5', '#F2B600', '#E90000']
 colors = ['#92D050', '#00B0F0', '#FFC000','#FF0000' ]
-output_dir = 'C:/Yuman/GrowthReduction/relative_growth_BC(right)'
+output_dir = 'C:/relative_growth_BC(right)'
 os.makedirs(output_dir, exist_ok=True)
 
 for category in categories:
