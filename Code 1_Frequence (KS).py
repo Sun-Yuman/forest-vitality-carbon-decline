@@ -25,7 +25,7 @@ rcParams['font.family'] = 'Arial'
 rcParams['font.size'] = 16  # Set font size
 
 # Define directory path and other preset parameters
-directory_path = 'C:/Yuman/'
+directory_path = 'C:/Def(tree)'
 all_files = os.listdir(directory_path)
 file_paths = [os.path.join(directory_path, file) for file in all_files if file.endswith('.txt') or file.endswith('.csv')]
 
@@ -69,11 +69,11 @@ def create_combined_plot(data, time_periods, colors, directory_path, file_path, 
         smoothed_values = np.nan_to_num(smoothed_values, nan=0.0)
         max_freq_values.append(max(smoothed_values))
 
-    if max_freq_values:
-        max_freq = max(max_freq_values)
-        max_freq = int(np.ceil(max_freq / 2) * 2)
-    else:
-        max_freq = 0
+    # if max_freq_values:
+    #     max_freq = max(max_freq_values)
+    #     max_freq = int(np.ceil(max_freq / 2) * 2)
+    # else:
+    #     max_freq = 0
 
     ax1.set_ylim(0, 14.1)
     ax1.set_yticks(np.arange(0, 14, 2))
