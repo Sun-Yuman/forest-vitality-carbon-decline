@@ -1,4 +1,4 @@
-Readme_code
+README(CODE)
 """""""""""""""""""""""""""""""""""
 Code: 0_Data preprocessing.py
 
@@ -9,6 +9,7 @@ Package: numpy 1.26.4, pandas 2.2.2
  Summary: This script processes data loading and merging, followed by cleaning, further processing, and saving the cleaned datasets.
 
 1. Load raw data and merge with additional datasets
+Raw Data(c1_tre.csv): The raw data and additional datasets are available at http://icp-forests.net/page/data-requests. For further inquiries, please contact the corresponding author.
 2. Clean the data by removing rows(code_defoliation) with missing or invalid values
 3: Exclude countries that have fewer than 30 unique 'survey_year' entries
 4. Remove species ID changed across monitoring years and unknown species
@@ -85,46 +86,42 @@ Package: numpy 1.26.4, pandas 2.2.2, matplotlib 3.8.4, scikit-learn 1.4.2, shap 
 """""""""""""""""""""""""""""""""""
 This script implements a Random Forest model for data preprocessing and optimization, incorporating spatial clustering, 
 multicollinearity analysis, feature importance assessment, and generating explainable visual outputs like SHAP values and 
-Partial Dependence Plots (PDPs). The primary focus is on predicting forest defoliation using nested cross-validation with the 
+Partial Dependence Plots (PDPs). The primary focus is on predicting forest defoliation(deviation) using nested cross-validation with the 
 Random Forest model (Dev_all).
 
 1. Data Loading and Preprocessing**:
-   - Load data from a CSV file containing spatial, environmental, and biological variables.
+   - Load data from a CSV file containing spatial, stand/plot, tree damage, climate,and air pollution variables.
+ Climate and air pollution data are available at three primary datasets:
+ Climate data were obtained from two primary sources: SPEIbase v2.9, provided by the Spanish National Research Council (CSIC) and accessible at https://spei.csic.es/; 
+ and the ERA5-Land dataset, produced by the European Centre for Medium-Range Weather Forecasts (ECMWF) and available through the Copernicus Climate Data Store at https://cds.climate.copernicus.eu/dataset. 
+ Additionally, air pollution data were sourced from the European Monitoring and Evaluation Programme (EMEP), which can be accessed at https://emep.int/. 
    - Define target (`Dev_all`) and selected features for modeling.
    - Rename columns for better readability and usability.
-
 2. Multicollinearity Analysis**:
    - Compute Variance Inflation Factors (VIF) for selected features.
    - Identify features with VIF > 5, which indicates potential multicollinearity issues.
-
 3. Spatial Clustering**:
    - Apply KMeans clustering on longitude and latitude data to spatially group samples.
    - Visualize clustering results using 2D and 3D scatter plots.
-
 4.Block Nested Cross-Validation with Hyperparameter Tuning**:
    - Use Bayesian Optimization (`BayesSearchCV`) to tune Random Forest hyperparameters.
    - Implement a custom scoring function to penalize overfitting by considering the difference between training and validation R² scores.
    - Conduct nested cross-validation to evaluate model performance using metrics such as R², RMSE, and MAE.
-  
 5. Model Training on Full Dataset and Interpretability**:
    - Train the final Random Forest model on the entire dataset using the best hyperparameters and selected features.
    - Generate and save feature importance plots to rank variable influence.
    - Create Partial Dependence Plots (PDPs) to visualize the relationships between features and the target variable.
    - Calculate SHAP values for detailed interpretability and generate summary and beeswarm plots.
-  
 7. Feature Importance and Selection**:
    - Calculate feature importance scores to prioritize variables.
    - Perform stepwise feature selection by iteratively removing less important variables and tracking performance.
-
 8. Refined Model Training with Reduced Features**:
    - Retrain the Random Forest model on the reduced feature set with optimized hyperparameters.
    - Perform a final nested cross-validation to validate the optimized feature set.
-  
 9. Visual Outputs**:
    - Feature Importance: Save and visualize feature importance for model interpretability.
    - Partial Dependence Plots: Generate PDPs for the reduced feature set to understand the impact of each feature.
    - SHAP Analysis: Generate SHAP values, correlation metrics, and beeswarm plots to understand feature contributions.
-
 10. Important output csv
     - Cross-validation results (`outer_cv_results.csv`, `inner_cv_results.csv`).
     - Selecte best hyperparameters(`best_params_overall.csv`).
@@ -153,12 +150,14 @@ Python version: Python 3.11.5
 Package: numpy 1.26.4, pandas 2.2.2, matplotlib 3.8.4, seaborn 0.13.2, sklearn 1.4.2, Statsmodels: 0.14.2
 
 """""""""""""""""""""""""""""""""""
-This script performs several tasks related to the analysis of defoliation , net change,  and carbon sink data.
+This script performs several tasks related to the analysis of defoliation, net change, and Net CO2 emissions data.
 
-1.It starts by loading and merging multiple CSV files, then processes and cleans the data.
-2.It calculates means and deviations from baselines, filters the data for specific years.
-3.The script also includes various plotting routines to visualize the relationships between defoliation, net change, and carbon sink data.
-4.It generates scatter plots, line plots, and bar plots with linear regression and confidence intervals, and applies polynomial fit for better visualization.
+The Carbon related data are available at https://unfccc.int/ghg-inventories-annex-i-parties/2023. For further inquiries, please contact the corresponding author.
+1.It computes annual averages and plots a dual-axis chart of net change (line) and CO₂ removals (bars).
+2.It performs linear regression on carbon emissions versus net change, displaying confidence and prediction intervals with regression statistics.
+3.It creates scatter plots with regression lines for different periods (1990–2021 and 2010–2021), including annotated regression details. 
+4.It calculates 3-year moving averages, applies polynomial fitting with confidence intervals, and plots the trends for net change, CO₂ emissions, and defoliation on dual y-axes.
 """""""""""""""""""""""""""""""""""
+
 
 
