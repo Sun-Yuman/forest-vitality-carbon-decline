@@ -27,8 +27,7 @@ import pandas as pd
 import numpy as np
 from shapely.geometry import Polygon, Point
 import matplotlib.pyplot as plt
-from shapely.ops import transform
-from functools import partial
+
 # Function to create a grid
 def create_grid(lon_min, lon_max, lat_min, lat_max, spacing):
     cols = list(np.arange(lon_min, lon_max, spacing))
@@ -47,7 +46,10 @@ def create_grid(lon_min, lon_max, lat_min, lat_max, spacing):
     return grid
 
 # Reading original shapefile
-input_shp_path = 'C:/Yuman/mapgriddev/biogeoreg.shp'
+BASE_DIR = 'C:/mapgriddev'
+
+
+input_shp_path = os.path.join(BASE_DIR, 'biogeoreg.shp')
 biogeoreg_gdf = gpd.read_file(input_shp_path)
 biogeoreg_crs = biogeoreg_gdf.crs
 
@@ -61,11 +63,11 @@ grid_gdf.set_crs(epsg=4326, inplace=True)
 grid_gdf.to_crs(crs=biogeoreg_crs, inplace=True)
 
 # Saving the grid with gridid to a Shapefile
-grid_output_shp_path = 'C:/Yuman/mapgriddev/grid_plot_gridid.shp'
+grid_output_shp_path = os.path.join(BASE_DIR, 'grid_plot_gridid.shp')
 grid_gdf.to_file(grid_output_shp_path)
 
 # Reading and processing data
-data_path = 'C:/Yuman/mapgriddev/alldefoliation.csv'
+data_path = os.path.join(BASE_DIR, 'alldefoliation.csv')
 data = pd.read_csv(data_path, low_memory=False)
 
 # Adjusting integer x and y values slightly
@@ -82,7 +84,7 @@ data_gdf.to_crs(crs=biogeoreg_crs, inplace=True)
 joined = gpd.sjoin(data_gdf, grid_gdf, how='left', op='within')
 
 # Saving the data with gridid
-output_path = 'C:/Yuman/mapgriddev/alldefoliationgrid.csv'
+output_path = os.path.join(BASE_DIR, 'alldefoliationgrid.csv')
 joined.to_csv(output_path, index=False)
 
 # Diagnostics
@@ -112,7 +114,7 @@ country_plot_combinations = joined.groupby(['code_country', 'code_plot']).ngroup
 print(f"Unique combinations of code_country and code_plot: {country_plot_combinations}")
 
 # Importing data for further analysis
-data_path = 'C:/Yuman/mapgriddev/alldefoliationgrid.csv'
+data_path = os.path.join(BASE_DIR, 'alldefoliationgrid.csv')
 data = pd.read_csv(data_path, low_memory=False)
 
 # Defining time periods
@@ -187,19 +189,21 @@ for period, (start, end) in time_periods.items():
             country_plot_avg_df = country_plot_avg_df.merge(period_dev, on=['code_country', 'code_plot'], how='outer')
 
 # Exporting all period data
-all_period_output_path = "C:/Yuman/mapgriddev/3_periods_merged_data_all.csv"
+BASE_DIR = 'C:/mapgriddev'
+
+all_period_output_path = os.path.join(BASE_DIR, '3_periods_merged_data_all.csv')
 all_period_data.to_csv(all_period_output_path, index=False)
 
 # Exporting final data
-output_path = "C:/Yuman/mapgriddev/2_5period_gridplotlevel.csv"
+final_output_path = os.path.join(BASE_DIR, '2_5period_gridplotlevel.csv')
 final_df.fillna(-9999).to_csv(output_path, index=False)
 
 # Exporting country and plot average and deviation data
-country_plot_output_path = "C:/Yuman/mapgriddev/4_plot_avgdev.csv"
+country_plot_output_path = os.path.join(BASE_DIR, '4_plot_avgdev.csv')
 country_plot_avg_df.fillna(-9999).to_csv(country_plot_output_path, index=False)
 
 # Reading data for further analysis
-file_path = 'C:/Yuman/mapgriddev/4_plot_avgdev_data.csv'
+file_path = os.path.join(BASE_DIR, '4_plot_avgdev_data.csv')
 df = pd.read_csv(file_path)
 
 df_filtered = df[df != -9999]
@@ -252,8 +256,9 @@ for col in num_columns:
     percentage_df[col] = percentage_series
 
 # Save results to CSV files
-count_output_file = 'C:/Yuman/mapgriddev/5_num_dev_bins_count.csv'
-percentage_output_file = 'C:/Yuman/mapgriddev/5_num_dev_bins_percentage.csv'
+
+count_output_file = os.path.join(BASE_DIR, '5_num_dev_bins_count.csv')
+percentage_output_file = os.path.join(BASE_DIR, '5_num_dev_bins_percentage.csv')
 count_df.to_csv(count_output_file)
 percentage_df.to_csv(percentage_output_file)
 
@@ -264,7 +269,7 @@ plt.rcParams['font.family'] = 'Arial'
 plt.rcParams['font.size'] = 14
 
 # Load data from CSV
-df = pd.read_csv('C:/Yuman/mapgriddev/5_num_dev_bins_percentage.csv')
+file_path = os.path.join(BASE_DIR, '5_num_dev_bins_percentage.csv')
 
 # Define colors and labels
 colors = ['#4575b4', '#91bfdb', '#e0f3f8', '#fee090', '#fc8d59', '#d73027']
@@ -357,9 +362,9 @@ for period in time_periods:
         saved_paths_donut.append(filename)
 
 # Reading data for clipping
-grid_output_shp_path = 'C:/Yuman/mapgriddev/grid_plot_gridid.shp'
-data_path = 'C:/Yuman/mapgriddev/2_5period_gridplotlevel.csv'
-input_shp_path = 'C:/Yuman/mapgriddev/biogeoreg.shp'
+grid_output_shp_path = os.path.join(BASE_DIR, 'grid_plot_gridid.shp')
+data_path = os.path.join(BASE_DIR, '2_5period_gridplotlevel.csv')
+input_shp_path = os.path.join(BASE_DIR, 'biogeoreg.shp')
 grid_gdf = gpd.read_file(grid_output_shp_path)
 data = pd.read_csv(data_path, low_memory=False)
 biogeoreg_gdf = gpd.read_file(input_shp_path)
@@ -405,7 +410,8 @@ for prefix in prefixes:
     clipped_gdf = batch_clip(merged_gdf, biogeoreg_gdf)
     if clipped_gdf.empty:
         continue
-    output_path = f'C:/Yuman/mapgriddev/plotlevelout_allbase/{prefix}_plotall.shp'
+    output_folder = os.path.join(BASE_DIR, 'plotlevelout_allbase')
+    output_path = os.path.join(BASE_DIR, f"{prefix}_plotall.shp")
     clipped_gdf.to_file(output_path)
     print(f"Output shapefile created for prefix {prefix} at {output_path}")
 
