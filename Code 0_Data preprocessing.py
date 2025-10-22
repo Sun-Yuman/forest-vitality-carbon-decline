@@ -5,12 +5,12 @@ This script processes defoliation data loading and merging, followed by cleaning
  Raw Data(c1_tre.csv): The raw data and additional datasets are available at http://icp-forests.net/page/data-requests.
  For further inquiries, please contact the corresponding author.
 2. Clean the data by removing rows (code_defoliation) with missing or invalid values
-3: Exclude countries that have fewer than 30 unique 'survey_year' entries
+3. Exclude countries that have fewer than 30 unique 'survey_year' entries
 4. Remove species ID changed across monitoring years and unknown species
 5. Retain the values from the beginning to the first occurrence of code_defoliation with a value of 100
 6. Remove the dataset by removing specific countries (Broadleaves in Norway and Sweden)
 7. Identify and remove duplicate rows
-8: Map tree species codes to species in English names('English_names')
+8. Map tree species codes to species in English names('English_names')
 9. Assign plot age based on the code values
 10. Remain specific columns from the dataset while discarding unnecessary ones
 """""""""""""""""""""""""""""""""""
@@ -406,4 +406,5 @@ print(len(data_filtered))
 # Save the processed data
 output_file_path = os.path.join(BASE_DIR, "allsp(8)age.txt")
 data_filtered.to_csv(output_file_path, sep='\t', index=False)
+
 
